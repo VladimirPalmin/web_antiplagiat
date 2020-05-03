@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Web Antiplagiat</title>
+    <style>
+        .inputs {position:fixed;left:0;top:0;width:50%;height:100%;
+            background: bisque ;color: rgba(0, 0, 0, 0.41);overflow:auto;}
+        .controller {position: fixed; right: 0;top:0;width:50%;height:20%;
+            background: #80100a;color: #ffffff;overflow:auto;}
+        .outputs {position:fixed;right:0;bottom:0;width:50%;height:80%;
+            background: #172080;color: #fffb05;overflow:auto;}
+
+      </style>
+    <link rel="shortcut icon" href="{{ url_for('static',
+    filename='noun_Search_1221934.svg')}}">
+
+</head>
+<body>
+    <div class="inputs">
+        <p><b>ССЫЛКИ</b></p>
+        <table>
+        {% for item in cells %}
+            <form action="/execute_cell/{{ item[0] }}" method="post" id="form{{ item[0] }}">
+              <tr>
+                <td>
+                    <button type="submit">Execute cell</button>
+                    <button formaction="/remove_cell/{{ item[0] }}" type="submit">Remove cell</button>
+                    <br>
+                    <textarea name="input{{ item[0] }}" cols="80"
+                              style="max-height: 100px; max-width: 650px">{{
+                            item[1] }}</textarea>
+                    {% for i in item[2] %}
+                     <div style="width:300px; max-width:300px; display:block; white-space: pre-wrap;">{{ i }}</div>
+                    {% endfor %}
+                    <hr>
+                </td>
+              </tr>
+            </form>
+      {% endfor %}
+      </table>
+
+    </div>
+    <div class="outputs">
+        <p><b>ВЫВОД СРАВНЕНИЯ</b></p>
+        <table>
+        {% for item in cells %}
+            <form action="/execute_cell/{{ item[0] }}" method="post" id="form{{ item[0] }}">
+              <tr>
+                <td>
+                    <button formaction="/remove_cell/{{ item[0] }}" type="submit">Remove cell</button>
+                    <br>
+                    {% for i in item[2] %}
+                    <textarea name="input{{ item[0] }}" cols="80"
+                              style="max-height: 100px; max-width: 650px">{{
+                            i }}</textarea>
+                     <!-- maybe don't show this when no output -->
+                        {% endfor %}
+                    <hr>
+                </td>
+              </tr>
+            </form>
+        {% endfor %}
+      </table>
+
+    </div>
+
+    <div class="controller">
+        <p><b>УПРАВЛЕНИЕ</b></p>
+        <tr>
+            <form action="/add_link" method="post">
+              <button type="submit">Add a cell</button>
+            </form>
+          </tr>
+        <p><b>MDA5:</b></p>
+        <button type="submit">MD5</button>
+        <p><b>CRC32:</b></p>
+        <button type="submit">CRC32</button>
+    </div>
+</body>
+</html>
