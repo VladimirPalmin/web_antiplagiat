@@ -14,6 +14,8 @@ def check_error(func):
         except Exception as e:
             if type(e).__name__ == "ValueError":
                 return ["To compare you should write at least 2 link"]
+            if str(e) == "division by zero":
+                return ["To compare you should choose hash function"]
             else:
                 return ["Something strange happened"]
         return func(*args, **kwargs)
@@ -114,11 +116,15 @@ def compare(texts, algorithm='crc32', shingle_length=2, flag=False):
     :param algorithm: str, name hash function
     :param shingle_length: int
     """
+    if shingle_length == 0:
+        return ["Shingle length must be bigger 0"]
     if len(texts) < 2:
         raise ValueError
     shingles = []
     results = []
     for counter, text in enumerate(texts):
+        if shingle_length >= len(text):
+            return ["Shingle length too big"]
         text = delete_noise(text)
         if flag:
             results.append(f"There are {check_for_cheating(text, flag=flag)} "

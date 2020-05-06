@@ -13,6 +13,7 @@ inputs = ["Type your site link here"]
 outputs = ['']
 execute_counters = [0]
 current_execute_count = 0
+params = ['crc32', 2, False]
 
 
 @app.route('/favicon.svg')
@@ -22,6 +23,16 @@ def favicon():
         os.path.join(app.root_path, 'static'),
         'noun_Search_1221934.svg'
     )
+
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    """Changes parameters of anitiplagiat algorithm"""
+    global params
+    params[0] = request.form.get('hash')
+    params[1] = request.form.get('len')
+    params[2] = request.form.get('rus')
+    return redirect('/')
 
 
 @app.route('/execute_cell/<cell_id>', methods=['POST'])
@@ -40,10 +51,11 @@ def execute(cell_id=None):
 
         inputs[cell_id] = request.form['input{}'.format(cell_id)]
         texts = parsing(inputs[cell_id].split())
-        result = antiplagiat.compare(texts)
+        result = antiplagiat.compare(texts=texts, algorithm=params[0],
+                                     shingle_length=int(params[1]), flag=params[2])
     except BaseException as e:
         # anything could happen inside, even `exit()` call
-        result = [str(e)]
+        result = params
 
     outputs[cell_id] = result
     return redirect('/')
@@ -53,7 +65,8 @@ def execute(cell_id=None):
 def get():
     return render_template(
         'web_antiplagiat.html',
-        cells=zip(range(len(inputs)), inputs, outputs, execute_counters))
+        cells=zip(range(len(inputs)), inputs, outputs, execute_counters),
+        params=params)
 
 
 @app.route('/add_link', methods=['POST', 'GET'])

@@ -5,12 +5,12 @@
     <title>Web Antiplagiat</title>
     <style>
         .inputs {position:fixed;left:0;top:0;width:50%;height:100%;
-            background: bisque ;color: rgba(0, 0, 0, 0.41);overflow:auto;}
-        .controller {position: fixed; right: 0;top:0;width:50%;height:20%;
-            background: #80100a;color: #ffffff;overflow:auto;}
-        .outputs {position:fixed;right:0;bottom:0;width:50%;height:80%;
-            background: #172080;color: #fffb05;overflow:auto;}
-
+            background: #ffe4c4;color: rgb(0, 0, 0);overflow:auto;}
+        .controller {position: fixed; right: 0;top:0;width:50%;height:32%;
+            background: #ffe4c4;color: rgb(0, 0, 0);overflow:auto;}
+        .guide {position:fixed;right:0;bottom:0;width:50%;height:68%;
+            background: #ffe4c4;color: rgb(0, 0, 0);overflow:auto;}
+        ul {padding: 0; margin-left: 20px;}
       </style>
     <link rel="shortcut icon" href="{{ url_for('static',
     filename='noun_Search_1221934.svg')}}">
@@ -18,7 +18,9 @@
 </head>
 <body>
     <div class="inputs">
-        <p><b>ССЫЛКИ</b></p>
+        <ul>
+            <p><b>YOUR LINKS</b></p>
+
         <table>
         {% for item in cells %}
             <form action="/execute_cell/{{ item[0] }}" method="post" id="form{{ item[0] }}">
@@ -39,43 +41,54 @@
             </form>
       {% endfor %}
       </table>
-
+        </ul>
+    <script src="{{ url_for('static',filename='js/scripts.js') }}"></script>
     </div>
-    <div class="outputs">
-        <p><b>ВЫВОД СРАВНЕНИЯ</b></p>
-        <table>
-        {% for item in cells %}
-            <form action="/execute_cell/{{ item[0] }}" method="post" id="form{{ item[0] }}">
-              <tr>
-                <td>
-                    <button formaction="/remove_cell/{{ item[0] }}" type="submit">Remove cell</button>
-                    <br>
-                    {% for i in item[2] %}
-                    <textarea name="input{{ item[0] }}" cols="80"
-                              style="max-height: 100px; max-width: 650px">{{
-                            i }}</textarea>
-                     <!-- maybe don't show this when no output -->
-                        {% endfor %}
-                    <hr>
-                </td>
-              </tr>
-            </form>
-        {% endfor %}
-      </table>
+    <div class="guide">
+        <div style="text-align: center;"> <p><b>GUIDE</b></p></div>
+        <ul>
+            <p>This site helps you to compare similarity of sites using
+                shingle algorithm.</p>
+            <p> Each cell is a group for comparing so you can make
+                different combinations of sites. You also can choose one of
+                hash function or shingle length and check russian symbols in
+                the site.
+            </p>
+                Shingle length is the length of the pieces into which the
+                text is split.There is no single answer whats shingle length
+                should be.The traditional approach is to choose a length
+                ranging from 2 to 10.
+            <p>You can read about shingle algorithm <a href="https://en.wikipedia.org/wiki/W-shingling">here</a></p>
 
+        </ul>
     </div>
 
     <div class="controller">
-        <p><b>УПРАВЛЕНИЕ</b></p>
-        <tr>
-            <form action="/add_link" method="post">
-              <button type="submit">Add a cell</button>
+        <div style="text-align: center;"> <p><b>CONTROLLER</b></p></div>
+        <ul>
+            <tr>
+                <form action="/add_link" method="post">
+                    <button type="submit">Add a cell</button> Add a Cell
+                </form>
+              </tr>
+            <form action="/submit" method="post">
+                <input name="rus" id="rus" type="checkbox"> Check Russian
+                Symbols &nbsp;&nbsp;&nbsp;&nbsp;
+                Shingle Length:&nbsp;&nbsp;&nbsp;<input type="text" size="3"
+                                                        maxlength="20"
+                                                        value={{ params[1] }} name="len">
+                <p>Choose Hash Function:</p>
+                <dl>
+                <dt><input type="radio" name="hash" value="crc32">
+                <label for="crc32">CRC32</label></dt>
+                <dt><input type="radio" name="hash" value="sha1">
+                <label for="sha1">SHA1</label></dt>
+                <dt><input type="radio" name="hash" value="md5">
+                <label for="md5">MD5</label></dt>
+                </dl>
+                <input type="submit">
             </form>
-          </tr>
-        <p><b>MDA5:</b></p>
-        <button type="submit">MD5</button>
-        <p><b>CRC32:</b></p>
-        <button type="submit">CRC32</button>
+        </ul>
     </div>
 </body>
 </html>
