@@ -55,7 +55,7 @@ def execute(cell_id=None):
                                      shingle_length=int(params[1]), flag=params[2])
     except BaseException as e:
         # anything could happen inside, even `exit()` call
-        result = params
+        result = [str(e)]
 
     outputs[cell_id] = result
     return redirect('/')
